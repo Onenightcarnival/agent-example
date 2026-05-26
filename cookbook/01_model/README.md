@@ -39,4 +39,4 @@ uv run --env-file .env python cookbook/01_model/model_connection.py
 
 ## 取舍
 
-这个 recipe 只检查模型接入。tool、memory、workflow 和文件读写放到后面的章节。
+这个 recipe 只检查模型接入。tool、多轮对话、memory 和文件读写放到后面的章节。

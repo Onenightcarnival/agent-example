@@ -8,7 +8,7 @@
 cookbook/
   01_model/
   02_tools_mcp/
-  03_loop_workflow/
+  03_turns/
   04_memory/
   05_skills/
   06_sandbox/
@@ -21,7 +21,7 @@ docs/
 
 - `01_model`：模型接入、模型配置、OpenAI 兼容接口。
 - `02_tools_mcp`：本地 tool、MCP tool、外部系统调用。
-- `03_loop_workflow`：agent loop、固定 workflow、停止条件。
+- `03_turns`：conversation、turn、messages 上下文。
 - `04_memory`：system prompt、长期 memory、短期 state、checkpoint。
 - `05_skills`：skill 文件、skill 复用、subagent 使用 skill。
 - `06_sandbox`：文件系统、命令执行、权限、运行边界。

@@ -16,7 +16,7 @@
 
 1. `model`：接入大模型，确认模型配置能被 DeepAgents 使用。
 2. `tools_mcp`：工具和 MCP 让 agent 操作外部世界。
-3. `loop_workflow`：loop 让 agent 看结果再调整，workflow 把流程收束到固定路径。
+3. `turns`：用 `messages` 串起多轮对话。
 
 第二阶段是现代 agent，回答“agent 怎么变成工作单元”。
 
@@ -30,7 +30,7 @@
 cookbook/
   01_model/                 原始 agent：模型
   02_tools_mcp/             原始 agent：工具与 MCP
-  03_loop_workflow/         原始 agent：循环与流程
+  03_turns/                 原始 agent：多轮对话
   04_memory/                现代 agent：记忆
   05_skills/                现代 agent：技能
   06_sandbox/               现代 agent：办公环境
