@@ -1,0 +1,26 @@
+[project]
+name = "deepagents-cookbook"
+version = "0.1.0"
+description = "DeepAgents 中文示例集，包含 LangChain 和 LangGraph 的常用集成方式。"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "deepagents==0.5.3",
+    "langchain-mcp-adapters==0.1.14",
+    "langchain-openai==1.1.9",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
