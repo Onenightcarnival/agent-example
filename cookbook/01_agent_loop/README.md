@@ -1,11 +1,27 @@
 # Agent Loop
 
-这一章讲最小 agent loop。重点是让读者看清楚 agent 如何接收任务、选择动作、处理工具结果并决定是否继续。
+这一章用 DeepAgents 跑通最小 agent loop：接收任务、调用模型、必要时调用工具，再把结果放回消息循环。
 
-计划补充：
+## 运行
 
-- 最小 DeepAgents agent
-- 一次调用和多轮调用
-- 停止条件
-- 工具结果回到消息循环
-- 循环错误恢复
+```bash
+uv run python cookbook/01_agent_loop/minimal_agent.py
+uv run python cookbook/01_agent_loop/tool_loop.py
+```
+
+## 文件
+
+- `minimal_agent.py`：没有自定义工具的最小 agent。
+- `tool_loop.py`：agent 先调用工具，再根据工具结果回答。
+
+## 说明
+
+两个脚本都从根目录 `.env` 读取 `MODEL_BASE_URL`、`MODEL_API_KEY`、`MODEL_NAME`。
+
+`tool_loop.py` 关闭了 DeepSeek thinking：
+
+```python
+extra_body={"thinking": {"type": "disabled"}}
+```
+
+DeepSeek thinking 模式下，多轮工具调用需要把 `reasoning_content` 带回 API。这个示例先避开这件事，只看 agent loop 本身。
