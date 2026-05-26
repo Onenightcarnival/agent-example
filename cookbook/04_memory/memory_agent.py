@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import textwrap
 from pathlib import Path
 
 from deepagents import create_deep_agent
@@ -20,7 +21,12 @@ def main() -> None:
 
     agent = create_deep_agent(
         model=model,
-        system_prompt="你是 cookbook 维护助手。先判断读者场景，再给修改建议。",
+        system_prompt=textwrap.dedent(
+            """
+            你是招聘顾问，负责帮客户写 JD 初稿。
+            先判断业务场景，再写岗位职责、任职要求和加分项。
+            """
+        ).strip(),
         memory=["/memory/AGENTS.md"],
         backend=FilesystemBackend(root_dir=root, virtual_mode=True),
     )
@@ -30,7 +36,12 @@ def main() -> None:
             "messages": [
                 {
                     "role": "user",
-                    "content": "帮我写一句 recipe 开头，主题是 sandbox 权限。",
+                    "content": textwrap.dedent(
+                        """
+                        客户是一家做供应链系统的 B2B SaaS 公司，要招一名 AI 产品经理。
+                        帮我写 JD 初稿。
+                        """
+                    ).strip(),
                 }
             ],
         }
