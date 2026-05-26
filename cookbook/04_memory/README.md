@@ -17,9 +17,7 @@
 ## 运行方式
 
 ```bash
-export MODEL_NAME=openai:gpt-5
-export MODEL_API_KEY=你的密钥
-uv run python cookbook/04_memory/memory_agent.py
+uv run --env-file .env python cookbook/04_memory/memory_agent.py
 ```
 
 ## 关键点

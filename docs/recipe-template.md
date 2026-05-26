@@ -16,17 +16,18 @@ cookbook/主题目录/recipe_name/
 
 ## 运行方式
 
-列出必要环境变量。
+列出必要环境变量。默认写在 `.env` 里。
 
 ```bash
-export MODEL_NAME=openai:gpt-5
-export MODEL_API_KEY=你的密钥
+MODEL_BASE_URL=https://api.deepseek.com
+MODEL_API_KEY=xxxx
+MODEL_NAME=deepseek-v4-flash
 ```
 
 给出运行命令。
 
 ```bash
-uv run python cookbook/主题目录/example.py
+uv run --env-file .env python cookbook/主题目录/example.py
 ```
 
 如果需要额外服务、MCP server 或本地文件，在这里写清楚。

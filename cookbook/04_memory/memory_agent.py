@@ -7,13 +7,10 @@ from pathlib import Path
 
 from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
 
 def main() -> None:
-    load_dotenv(".env")
-
     root = Path("cookbook/04_memory").resolve()
     model = ChatOpenAI(
         model=os.environ["MODEL_NAME"],

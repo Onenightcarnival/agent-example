@@ -5,13 +5,10 @@ from __future__ import annotations
 import os
 
 from deepagents import create_deep_agent
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
 
 def main() -> None:
-    load_dotenv(".env")
-
     model = ChatOpenAI(
         model=os.environ["MODEL_NAME"],
         api_key=os.environ["MODEL_API_KEY"],

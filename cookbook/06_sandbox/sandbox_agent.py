@@ -8,13 +8,10 @@ from pathlib import Path
 
 from deepagents import FilesystemPermission, create_deep_agent
 from deepagents.backends import FilesystemBackend
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
 
 def main() -> None:
-    load_dotenv(".env")
-
     with tempfile.TemporaryDirectory() as tmpdir:
         root = Path(tmpdir)
         workspace = root / "workspace"

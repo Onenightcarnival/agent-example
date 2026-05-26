@@ -12,17 +12,18 @@
 
 ## 运行方式
 
-先设置模型。
+先在 `.env` 里设置模型。
 
 ```bash
-export MODEL_NAME=openai:gpt-5
-export MODEL_API_KEY=你的密钥
+MODEL_BASE_URL=https://api.deepseek.com
+MODEL_API_KEY=xxxx
+MODEL_NAME=deepseek-v4-flash
 ```
 
 运行：
 
 ```bash
-uv run python cookbook/01_model/minimal_agent.py
+uv run --env-file .env python cookbook/01_model/minimal_agent.py
 ```
 
 ## 关键点

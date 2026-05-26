@@ -299,7 +299,6 @@ dependencies = [
     { name = "deepagents" },
     { name = "langchain-mcp-adapters" },
     { name = "langchain-openai" },
-    { name = "python-dotenv" },
 ]
 
 [package.dev-dependencies]
@@ -312,7 +311,6 @@ requires-dist = [
     { name = "deepagents", specifier = "==0.5.3" },
     { name = "langchain-mcp-adapters", specifier = "==0.1.14" },
     { name = "langchain-openai", specifier = "==1.1.9" },
-    { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
 
 [package.metadata.requires-dev]

@@ -58,19 +58,19 @@ cp .env.example .env
 常用变量：
 
 ```bash
-MODEL_BASE_URL=
-MODEL_API_KEY=...
-MODEL_NAME=openai:gpt-5
+MODEL_BASE_URL=https://api.deepseek.com
+MODEL_API_KEY=xxxx
+MODEL_NAME=deepseek-v4-flash
 ```
 
-如果使用兼容 OpenAI 的模型服务，把服务地址填到 `MODEL_BASE_URL`。
+示例默认使用 DeepSeek 的 OpenAI 兼容接口。换模型时，改这三个变量即可。
 
 ## 运行示例
 
 每个 recipe 的 README 都会写运行命令。比如：
 
 ```bash
-uv run python cookbook/01_model/minimal_agent.py
+uv run --env-file .env python cookbook/01_model/minimal_agent.py
 ```
 
 示例代码尽量小，只保留说明问题所需的部分。需要外部服务、模型调用或额外环境变量时，会在对应 README 里说明。

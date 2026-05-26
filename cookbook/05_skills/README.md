@@ -13,9 +13,7 @@
 ## 运行方式
 
 ```bash
-export MODEL_NAME=openai:gpt-5
-export MODEL_API_KEY=你的密钥
-uv run python cookbook/05_skills/skill_agent.py
+uv run --env-file .env python cookbook/05_skills/skill_agent.py
 ```
 
 ## 关键点

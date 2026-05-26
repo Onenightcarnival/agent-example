@@ -14,9 +14,7 @@ agent 要完成工作，通常需要文件和命令。sandbox 给它一个受控
 ## 运行方式
 
 ```bash
-export MODEL_NAME=openai:gpt-5
-export MODEL_API_KEY=你的密钥
-uv run python cookbook/06_sandbox/sandbox_agent.py
+uv run --env-file .env python cookbook/06_sandbox/sandbox_agent.py
 ```
 
 ## 关键点
