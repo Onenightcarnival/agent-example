@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import os
 from datetime import timedelta
-from textwrap import dedent
 
 import httpx
 from deepagents import create_deep_agent
@@ -92,12 +91,7 @@ async def main() -> None:
     agent = create_deep_agent(
         model=model,
         tools=[get_order_status, *mcp_tools],
-        system_prompt=dedent(
-            """
-            你是订单助手。需要订单状态时，先调用 get_order_status。
-            需要文件、终端或浏览器能力时，使用 sandbox MCP tool。不要猜。
-            """
-        ).strip(),
+        system_prompt="你是工具说明助手。",
         middleware=[DisableBuiltinTools()],
     )
 
@@ -106,7 +100,7 @@ async def main() -> None:
             "messages": [
                 {
                     "role": "user",
-                    "content": "帮我查一下订单 A1002，再用 sandbox 运行 pwd 看当前目录。回答用两条短句。",
+                    "content": "告诉我你现在有哪些工具可用。",
                 }
             ]
         }
