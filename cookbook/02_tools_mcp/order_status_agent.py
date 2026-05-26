@@ -1,11 +1,49 @@
-"""Show how a local Python function becomes a DeepAgents tool."""
+"""Show how Python tools and MCP tools work together in DeepAgents."""
 
 from __future__ import annotations
 
+import asyncio
 import os
+from datetime import timedelta
+from textwrap import dedent
 
+import httpx
 from deepagents import create_deep_agent
+from langchain.agents.middleware import AgentMiddleware
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
+
+BUILTIN_TOOLS = frozenset(
+    {
+        "write_todos",
+        "ls",
+        "read_file",
+        "write_file",
+        "edit_file",
+        "glob",
+        "grep",
+        "execute",
+        "task",
+    }
+)
+
+
+def tool_name(tool) -> str | None:
+    if isinstance(tool, dict):
+        name = tool.get("name")
+        return name if isinstance(name, str) else None
+    name = getattr(tool, "name", None)
+    return name if isinstance(name, str) else None
+
+
+class DisableBuiltinTools(AgentMiddleware):
+    def wrap_model_call(self, request, handler):
+        tools = [tool for tool in request.tools if tool_name(tool) not in BUILTIN_TOOLS]
+        return handler(request.override(tools=tools))
+
+    async def awrap_model_call(self, request, handler):
+        tools = [tool for tool in request.tools if tool_name(tool) not in BUILTIN_TOOLS]
+        return await handler(request.override(tools=tools))
 
 
 def get_order_status(order_id: str) -> str:
@@ -18,25 +56,57 @@ def get_order_status(order_id: str) -> str:
     return orders.get(order_id, "没有找到这个订单")
 
 
-def main() -> None:
+def mcp_http_client(
+    headers: dict[str, str] | None = None,
+    timeout: httpx.Timeout | None = None,
+    auth: httpx.Auth | None = None,
+) -> httpx.AsyncClient:
+    return httpx.AsyncClient(headers=headers, timeout=timeout, auth=auth, trust_env=False)
+
+
+async def load_sandbox_tools():
+    client = MultiServerMCPClient(
+        {
+            "sandbox": {
+                "transport": "streamable_http",
+                "url": os.environ.get("SANDBOX_MCP_SERVER_URL", "http://localhost:8080/mcp"),
+                "timeout": timedelta(seconds=30),
+                "sse_read_timeout": timedelta(seconds=300),
+                "httpx_client_factory": mcp_http_client,
+            }
+        }
+    )
+    return await client.get_tools()
+
+
+async def main() -> None:
     model = ChatOpenAI(
         model=os.environ["MODEL_NAME"],
         api_key=os.environ["MODEL_API_KEY"],
         base_url=os.environ.get("MODEL_BASE_URL") or None,
+        http_client=httpx.Client(trust_env=False),
+        extra_body={"thinking": {"type": "disabled"}},
     )
+    mcp_tools = await load_sandbox_tools()
 
     agent = create_deep_agent(
         model=model,
-        tools=[get_order_status],
-        system_prompt="你是订单助手。需要订单状态时，先调用 tool，不要猜。",
+        tools=[get_order_status, *mcp_tools],
+        system_prompt=dedent(
+            """
+            你是订单助手。需要订单状态时，先调用 get_order_status。
+            需要文件、终端或浏览器能力时，使用 sandbox MCP tool。不要猜。
+            """
+        ).strip(),
+        middleware=[DisableBuiltinTools()],
     )
 
-    result = agent.invoke(
+    result = await agent.ainvoke(
         {
             "messages": [
                 {
                     "role": "user",
-                    "content": "帮我查一下订单 A1002，现在是什么状态？",
+                    "content": "帮我查一下订单 A1002，再用 sandbox 运行 pwd 看当前目录。回答用两条短句。",
                 }
             ]
         }
@@ -46,4 +116,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -5,7 +5,7 @@
 第一阶段是原始 agent：
 
 - [01_model](01_model/)：接入模型，确认模型配置能被 DeepAgents 使用。
-- [02_tools_mcp](02_tools_mcp/)：给 agent 增加 tool，后续可替换成 MCP tool。
+- [02_tools_mcp](02_tools_mcp/)：给 agent 增加本地 tool 和 MCP tool。
 - [03_loop_workflow](03_loop_workflow/)：用 loop 推进任务，用 workflow 收住步骤。
 
 第二阶段是现代 agent：
