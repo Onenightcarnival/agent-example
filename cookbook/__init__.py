@@ -1,1 +1,1 @@
-"""DeepAgents cookbook recipes."""
+"""Agent cookbook recipes implemented with DeepAgents."""

@@ -1,7 +1,7 @@
 [project]
 name = "deepagents-cookbook"
 version = "0.1.0"
-description = "DeepAgents 中文 cookbook，按 agent 能力组织可运行示例。"
+description = "Agent 中文 cookbook，使用 DeepAgents 编写可运行示例。"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

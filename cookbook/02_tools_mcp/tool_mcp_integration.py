@@ -1,4 +1,4 @@
-"""Show how Python tools and MCP tools work together in DeepAgents."""
+"""Show how Python tools and MCP tools work together in an agent."""
 
 from __future__ import annotations
 

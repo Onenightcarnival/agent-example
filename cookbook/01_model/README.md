@@ -2,7 +2,7 @@
 
 ## 场景
 
-先把模型接入 DeepAgents。
+先把模型接入 agent。
 
 这个示例使用 OpenAI 兼容接口初始化 `ChatOpenAI`，再把它传给 `create_deep_agent`。示例会关闭 DeepSeek thinking、传入自定义 `httpx.Client`，并过滤 DeepAgents 内置工具。
 

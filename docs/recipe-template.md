@@ -34,7 +34,8 @@ uv run --env-file .env python cookbook/主题目录/example.py
 
 ## 关键点
 
-- 说明这个 recipe 里最重要的 DeepAgents 对象。
+- 先说明这个 recipe 里最重要的 agent 概念。
+- 再说明对应的 DeepAgents 对象。
 - 说明输入、输出和状态变化。
 - 说明 tool、memory、skill 或 sandbox 的边界。
 

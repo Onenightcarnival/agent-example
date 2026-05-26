@@ -1,6 +1,6 @@
 ---
 name: recipe-indexer
-description: 整理 DeepAgents Cookbook 的 recipe notes，生成一份按章节排列的 Markdown 索引。需要处理 recipe 目录、章节摘要或 cookbook 大纲时使用。
+description: 整理 Agent Cookbook 的 recipe notes，生成一份按章节排列的 Markdown 索引。需要处理 recipe 目录、章节摘要或 cookbook 大纲时使用。
 metadata:
   short-description: 生成 cookbook recipe 索引
 ---

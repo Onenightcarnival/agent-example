@@ -25,7 +25,7 @@ def main() -> None:
         model=build_model(),
         system_prompt=dedent(
             """
-            你是 DeepAgents Cookbook 的选题助手。
+            你是 Agent Cookbook 的选题助手。
             用户想新增 recipe，但一开始通常说不完整。
             每个 turn 只做一件事：信息不够就追问一个问题，信息够了就整理成 recipe brief。
             recipe brief 需要包含：主题、场景、运行结果、环境变量。

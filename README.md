@@ -1,20 +1,21 @@
-# DeepAgents Cookbook
+# Agent Cookbook
 
-这个仓库收集 DeepAgents 的中文 recipe。
+这个仓库收集 agent 应用的中文 recipe。DeepAgents 是当前示例使用的实现库。
 
 它不按 API 参数堆章节，而是按 agent 能力组织内容：先搭出能动起来的原始 agent，再把它扩成能承担工作的现代 agent。
 
 ## 适合谁
 
 - 已经会写基础 Python，想系统学习 agent 应用的人
-- 想理解 DeepAgents 如何组织 model、tool、state、memory、skill 和 sandbox 的人
+- 想理解 agent 如何组织 model、tool、state、memory、skill 和 sandbox 的人
+- 想看 DeepAgents 如何落地这些概念的人
 - 想看可运行示例，而不是只看零散代码片段的人
 
 ## 设计主线
 
 第一阶段是原始 agent，回答“agent 怎么动起来”。
 
-1. `model`：接入大模型，确认模型配置能被 DeepAgents 使用。
+1. `model`：接入大模型，确认模型配置能被 agent 使用。
 2. `tools_mcp`：工具和 MCP 让 agent 操作外部世界。
 3. `turns`：用 `messages` 串起多轮对话。
 
@@ -82,7 +83,7 @@ uv run --env-file .env python cookbook/01_model/model_connection.py
 1. 场景：这个示例解决什么问题
 2. 代码：可以直接运行的最小实现
 3. 运行方式：命令、环境变量和预期输出
-4. 关键点：DeepAgents 对象和行为
+4. 关键点：agent 概念、DeepAgents 对象和运行行为
 5. 取舍：适合什么，不适合什么
 
 ## 参与方式

@@ -1,6 +1,6 @@
 # 文档维护说明
 
-这个项目按“二阶段、六主题”维护 cookbook。
+这个项目按“二阶段、六主题”维护 agent cookbook。当前可运行示例使用 DeepAgents。
 
 ## 目录
 

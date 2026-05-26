@@ -1,10 +1,10 @@
 # Cookbook
 
-这里按两个阶段组织 DeepAgents recipe。
+这里按两个阶段组织 agent recipe。当前代码用 DeepAgents 演示这些概念。
 
 第一阶段是原始 agent：
 
-- [01_model](01_model/)：接入模型，确认模型配置能被 DeepAgents 使用。
+- [01_model](01_model/)：接入模型，确认模型配置能被 agent 使用。
 - [02_tools_mcp](02_tools_mcp/)：给 agent 增加本地 tool 和 MCP tool。
 - [03_turns](03_turns/)：用 `messages` 串起多轮对话。
 

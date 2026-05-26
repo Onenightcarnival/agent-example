@@ -1,6 +1,6 @@
 # AGENTS.md
 
-这个仓库是中文 DeepAgents Cookbook。请把它当成给开发者看的技术项目来维护。
+这个仓库是中文 Agent Cookbook。DeepAgents 是当前实现实例。请把它当成给开发者看的技术项目来维护。
 
 ## 写作约定
 

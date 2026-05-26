@@ -1,4 +1,4 @@
-"""Connect a chat model to DeepAgents."""
+"""Connect a chat model to an agent implemented with DeepAgents."""
 
 from __future__ import annotations
 
