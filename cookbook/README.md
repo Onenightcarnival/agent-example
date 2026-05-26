@@ -12,6 +12,6 @@
 
 - [04_memory](04_memory/)：把提示词、长期记忆和当前 state 分开看。
 - [05_skills](05_skills/)：把稳定做法写成 skill，让 agent 复用。
-- [06_sandbox](06_sandbox/)：让 agent 在受控文件系统里工作。
+- [06_sandbox](06_sandbox/)：让 agent 通过远程 sandbox 处理文件和命令。
 
 每个目录先给一个最小示例。新增 recipe 时，尽量放进已有主题。如果一个示例跨多个主题，放到它最想讲清楚的主题下。

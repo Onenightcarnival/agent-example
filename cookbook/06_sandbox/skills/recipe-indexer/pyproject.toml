@@ -1,0 +1,22 @@
+[project]
+name = "recipe-indexer"
+version = "0.1.0"
+description = "Python runtime helpers for the recipe-indexer skill."
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
