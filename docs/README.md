@@ -5,19 +5,20 @@
 ## Cookbook 分类
 
 ```text
-00_getting_started
-01_core_concepts
-02_tools
-03_memory
-04_rag
-05_langgraph_workflows
-06_multi_agent
-07_planning
-08_production
-09_end_to_end_apps
+00_model_setup
+01_agent_loop
+02_instructions
+03_tools
+04_workspace
+05_state_and_context
+06_planning
+07_subagents
+08_human_approval
+09_runtime_boundaries
+10_end_to_end_agents
 ```
 
-分类按学习顺序排列。前面的章节帮助读者跑通基础能力，后面的章节组合多个能力，做更接近真实项目的 agent 应用。
+分类按构建顺序排列。先跑通模型和最小 agent loop，再加入指令、工具、状态、workspace、子 agent、人工确认和运行边界。
 
 ## Recipe 文件建议
 

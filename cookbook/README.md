@@ -4,15 +4,16 @@
 
 ## 目录
 
-- `00_getting_started/`：最小可运行示例、环境变量、基础对话和 streaming。
-- `01_core_concepts/`：agent、tool、state、message、checkpoint 等核心概念。
-- `02_tools/`：自定义工具、外部 API、文件读写和权限边界。
-- `03_memory/`：短期记忆、长期记忆、上下文压缩和历史裁剪。
-- `04_rag/`：文档加载、向量检索、rerank 和带引用回答。
-- `05_langgraph_workflows/`：把 DeepAgents 放进 LangGraph 工作流。
-- `06_multi_agent/`：supervisor-worker、planner-executor 和角色协作。
-- `07_planning/`：任务拆解、执行跟踪、失败恢复和结果检查。
-- `08_production/`：日志、追踪、成本、超时、重试和安全边界。
-- `09_end_to_end_apps/`：研究助手、代码库助手、文档问答和报告生成。
+- `00_model_setup/`：模型配置、环境变量、DeepSeek 接入和 streaming。
+- `01_agent_loop/`：最小 agent loop、停止条件、循环错误恢复。
+- `02_instructions/`：system prompt、任务指令、输出格式和工具使用规则。
+- `03_tools/`：自定义工具、工具参数、工具返回和错误处理。
+- `04_workspace/`：读文件、写文件、修改文件和维护中间产物。
+- `05_state_and_context/`：消息历史、任务状态、工具结果和上下文裁剪。
+- `06_planning/`：任务拆解、todo 更新、失败步骤修复和最终检查。
+- `07_subagents/`：主 agent 分派任务、子 agent 上下文边界和结果合并。
+- `08_human_approval/`：暂停、确认、拒绝后改计划和恢复执行。
+- `09_runtime_boundaries/`：最大步数、超时、重试、工具限制和成本边界。
+- `10_end_to_end_agents/`：研究、代码编辑、文档写作和数据分析 agent。
 
-先从 `00_getting_started/` 开始补示例。每个分类目录里保留一个 README，用来索引该分类下的 recipe。
+先从 `00_model_setup/` 和 `01_agent_loop/` 开始补示例。每个分类目录里保留一个 README，用来索引该分类下的 recipe。
