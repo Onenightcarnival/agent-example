@@ -19,7 +19,7 @@ docs/
 
 ## 主题边界
 
-- `01_model`：模型配置、system prompt、最小 agent。
+- `01_model`：模型接入、模型配置、OpenAI 兼容接口。
 - `02_tools_mcp`：本地 tool、MCP tool、外部系统调用。
 - `03_loop_workflow`：agent loop、固定 workflow、停止条件。
 - `04_memory`：system prompt、长期 memory、短期 state、checkpoint。

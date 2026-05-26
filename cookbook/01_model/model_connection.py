@@ -1,9 +1,10 @@
-"""Run the smallest DeepAgents example with one model."""
+"""Connect a chat model to DeepAgents."""
 
 from __future__ import annotations
 
 import os
 
+import httpx
 from deepagents import create_deep_agent
 from langchain_openai import ChatOpenAI
 
@@ -13,6 +14,8 @@ def main() -> None:
         model=os.environ["MODEL_NAME"],
         api_key=os.environ["MODEL_API_KEY"],
         base_url=os.environ.get("MODEL_BASE_URL") or None,
+        http_client=httpx.Client(trust_env=False),
+        extra_body={"thinking": {"type": "disabled"}},
     )
 
     agent = create_deep_agent(
@@ -25,7 +28,7 @@ def main() -> None:
             "messages": [
                 {
                     "role": "user",
-                    "content": "用两句话解释 agent 为什么需要 tool。",
+                    "content": "用两句话解释 model 在 agent 里负责什么。",
                 }
             ]
         }

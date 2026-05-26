@@ -14,7 +14,7 @@
 
 第一阶段是原始 agent，回答“agent 怎么动起来”。
 
-1. `model`：模型负责理解任务、判断下一步。
+1. `model`：接入大模型，确认模型配置能被 DeepAgents 使用。
 2. `tools_mcp`：工具和 MCP 让 agent 操作外部世界。
 3. `loop_workflow`：loop 让 agent 看结果再调整，workflow 把流程收束到固定路径。
 
@@ -70,7 +70,7 @@ MODEL_NAME=deepseek-v4-flash
 每个 recipe 的 README 都会写运行命令。比如：
 
 ```bash
-uv run --env-file .env python cookbook/01_model/minimal_agent.py
+uv run --env-file .env python cookbook/01_model/model_connection.py
 ```
 
 示例代码尽量小，只保留说明问题所需的部分。需要外部服务、模型调用或额外环境变量时，会在对应 README 里说明。

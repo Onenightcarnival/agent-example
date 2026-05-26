@@ -2,36 +2,40 @@
 
 ## 场景
 
-先跑通最小 agent。
+先把模型接入 DeepAgents。
 
-这个示例只设置模型和 system prompt，不加业务 tool。DeepAgents 仍会带上默认工具，比如 todo 和文件工具。这里先不使用它们，只看 agent 如何接收任务并返回结果。
+这个示例使用 OpenAI 兼容接口初始化 `ChatOpenAI`，再把它传给 `create_deep_agent`。示例会关闭 DeepSeek thinking，并传入自定义 `httpx.Client`。
 
 ## 代码
 
-见 [minimal_agent.py](minimal_agent.py)。
+见 [model_connection.py](model_connection.py)。
 
 ## 运行方式
 
-先在 `.env` 里设置模型。
+先在 `.env` 里设置模型接入参数。
 
 ```bash
 MODEL_BASE_URL=https://api.deepseek.com
 MODEL_API_KEY=xxxx
-MODEL_NAME=deepseek-v4-flash
+MODEL_NAME=deepseek-v4-pro
 ```
 
 运行：
 
 ```bash
-uv run --env-file .env python cookbook/01_model/minimal_agent.py
+uv run --env-file .env python cookbook/01_model/model_connection.py
 ```
 
 ## 关键点
 
-- `create_deep_agent` 创建一个可执行的 LangGraph graph。
-- `model` 可以用 `provider:model` 字符串，也可以传已经初始化好的 chat model。
-- `system_prompt` 像岗位说明。它告诉 agent 该怎么工作，而不是把所有上下文都塞进用户消息。
+- `MODEL_NAME` 对应具体模型名，比如 `deepseek-v4-pro`。
+- `MODEL_API_KEY` 是模型服务的密钥。
+- `MODEL_BASE_URL` 指向 OpenAI 兼容接口。使用 OpenAI 官方接口时可以不设置。
+- `extra_body={"thinking": {"type": "disabled"}}` 关闭 DeepSeek thinking。
+- `httpx.Client(trust_env=False)` 忽略本机代理等环境变量。
+- `model` 可以传 `provider:model` 字符串，也可以传已经初始化好的 chat model。
+- `system_prompt` 会影响模型回答。这里只放一条很短的角色说明。
 
 ## 取舍
 
-这个 recipe 适合检查模型配置是否能跑通。它不适合展示工具调用、文件读写或长期任务。
+这个 recipe 只检查模型接入。tool、memory、workflow 和文件读写放到后面的章节。
