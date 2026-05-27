@@ -22,7 +22,7 @@
 
 第四阶段是进阶 agent：
 
-- [10_hooks](10_hooks/)：在关键步骤插入自定义逻辑。
+- [10_hooks](10_hooks/)：在 tool 调用前做权限检查和审计记录。
 - [11_advanced_memory](11_advanced_memory/)：拆分长期偏好、任务经验和检索记忆。
 - [12_hitl](12_hitl/)：在关键节点加入人工确认、打断和继续。
 
