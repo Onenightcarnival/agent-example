@@ -36,7 +36,7 @@
 第四阶段是进阶 agent，回答“复杂任务怎么控制和扩展”。
 
 10. `hooks`：在关键步骤插入自定义逻辑，接入权限、记录和业务规则。
-11. `advanced_memory`：把记忆拆成更细的层次，处理长期偏好、任务经验和检索。
+11. `career_memory`：用职业履历模型组织长期记忆，区分偏好、经验和踩坑记录。
 12. `hitl`：在关键节点加入人工确认、打断和继续。
 
 ## 内容结构
@@ -53,7 +53,7 @@ examples/
   08_observability/         生产 agent：可观测
   09_service_integration/   生产 agent：服务化集成
   10_hooks/                 进阶 agent：自定义 hooks
-  11_advanced_memory/       进阶 agent：进阶记忆
+  11_career_memory/         进阶 agent：职业履历式记忆
   12_hitl/                  进阶 agent：human in the loop
 docs/
   README.md                 写作约定和目录说明

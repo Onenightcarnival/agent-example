@@ -16,7 +16,7 @@ examples/
   08_observability/
   09_service_integration/
   10_hooks/
-  11_advanced_memory/
+  11_career_memory/
   12_hitl/
 docs/
   README.md
@@ -46,7 +46,7 @@ docs/
 第四阶段是进阶 agent：
 
 - `10_hooks`：模型调用、tool 调用和状态更新前后的自定义逻辑。
-- `11_advanced_memory`：分层记忆、检索记忆、摘要、遗忘和用户偏好。
+- `11_career_memory`：职业履历式长期记忆、客户偏好、经验和踩坑记录。
 - `12_hitl`：人工确认、审批、打断、继续和结果修正。
 
 如果一个示例同时涉及多个主题，放到它最想讲清楚的主题。不要为了分类新建很细的目录。
