@@ -16,7 +16,7 @@ from fastapi.responses import StreamingResponse
 from langchain.agents.middleware import AgentMiddleware
 from langchain.agents.middleware.human_in_the_loop import InterruptOnConfig
 from langchain_openai import ChatOpenAI
-from langfuse import Langfuse, propagate_attributes
+from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
 from langfuse.types import TraceContext
 from langgraph.checkpoint.memory import MemorySaver
@@ -179,7 +179,7 @@ def resolve_identity(
 
 def agent_config(identity: RequestIdentity) -> dict[str, Any]:
     get_langfuse()
-    langfuse_handler = CallbackHandler()
+    langfuse_handler = CallbackHandler(trace_context=TraceContext(trace_id=identity.langfuse_trace_id))
     return {
         "callbacks": [langfuse_handler],
         "configurable": {"thread_id": identity.thread_id},
@@ -207,6 +207,15 @@ def final_answer(result: dict[str, Any]) -> str:
     return result["messages"][-1].content
 
 
+def chunk_text(chunk: Any) -> str:
+    content = getattr(chunk, "content", "")
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(part.get("text", "") for part in content if isinstance(part, dict))
+    return ""
+
+
 def sse_event(event: str, data: dict[str, Any]) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
@@ -229,6 +238,19 @@ def interrupt_email(interrupt: Interrupt) -> dict[str, Any]:
     request = interrupt.value
     action = request["action_requests"][0]
     return dict(action["args"])
+
+
+def interrupt_from_chunk(chunk: Any) -> Interrupt | None:
+    if not isinstance(chunk, dict):
+        return None
+    interrupts = chunk.get("__interrupt__")
+    if not interrupts:
+        return None
+    return interrupts[0]
+
+
+def is_root_graph_event(event: dict[str, Any]) -> bool:
+    return event.get("name") == "LangGraph"
 
 
 def resume_payload(decision: ReviewDecision) -> dict[str, Any]:
@@ -266,46 +288,58 @@ def create_draft_stream(
 ) -> StreamingResponse:
     identity = resolve_identity(x_session_id, x_trace_id, x_thread_id)
 
-    def stream():
+    async def stream():
         langfuse = get_langfuse()
         yield sse_event("request.started", event_payload(identity))
-        events: list[tuple[str, dict[str, Any]]] = []
+        agent_input = {"messages": [{"role": "user", "content": request.message}]}
+        root_span = langfuse.start_observation(
+            as_type="span",
+            name="hitl_email_draft",
+            trace_context=TraceContext(trace_id=identity.langfuse_trace_id),
+            input=agent_input,
+            metadata=trace_metadata(identity, request.metadata),
+        )
+        output: dict[str, Any] = {}
         try:
-            agent_input = {"messages": [{"role": "user", "content": request.message}]}
-            with langfuse.start_as_current_observation(
-                as_type="span",
-                name="hitl_email_draft",
-                trace_context=TraceContext(trace_id=identity.langfuse_trace_id),
-                input=agent_input,
-                metadata=trace_metadata(identity, request.metadata),
-            ) as root_span:
-                with propagate_attributes(
-                    session_id=identity.session_id,
-                    tags=["deepagents-cookbook", "hitl", "service-integration"],
-                    trace_name="hitl_email_review_demo",
-                ):
-                    result = get_agent().invoke(agent_input, config=agent_config(identity))
+            async for event in get_agent().astream_events(agent_input, config=agent_config(identity), version="v2"):
+                event_name = event.get("event")
+                data = event.get("data", {})
 
-                interrupt = first_interrupt(result)
+                if event_name == "on_chat_model_stream":
+                    delta = chunk_text(data.get("chunk"))
+                    if delta:
+                        yield sse_event("message.delta", event_payload(identity, delta=delta))
+
+                if event_name == "on_tool_start":
+                    yield sse_event("tool.started", event_payload(identity, tool_name=event.get("name")))
+
+                if event_name == "on_tool_end":
+                    yield sse_event("tool.finished", event_payload(identity, tool_name=event.get("name")))
+
+                interrupt = interrupt_from_chunk(data.get("chunk")) if is_root_graph_event(event) else None
                 if interrupt:
                     review_payload = event_payload(
                         identity,
                         review_id=interrupt.id,
                         email=interrupt_email(interrupt),
                     )
-                    root_span.update(output={"status": "pending_review", **review_payload})
-                    events.append(("review.required", review_payload))
-                else:
-                    answer = final_answer(result)
-                    root_span.update(output={"status": "completed", "answer": answer})
-                    events.append(("message.done", event_payload(identity, answer=answer)))
+                    output = {"status": "pending_review", **review_payload}
+                    yield sse_event("review.required", review_payload)
 
+                if event_name == "on_chain_end" and is_root_graph_event(event):
+                    result = data.get("output")
+                    if isinstance(result, dict) and "messages" in result:
+                        answer = final_answer(result)
+                        output = {"status": "completed", "answer": answer}
+                        yield sse_event("message.done", event_payload(identity, answer=answer))
         except Exception as exc:
-            events.append(("error", event_payload(identity, code="agent_run_failed", message=str(exc))))
+            output = {"status": "error", "message": str(exc)}
+            yield sse_event("error", event_payload(identity, code="agent_run_failed", message=str(exc)))
         finally:
+            if output:
+                root_span.update(output=output)
+            root_span.end()
             langfuse.flush()
-        for event, payload in events:
-            yield sse_event(event, payload)
 
     return StreamingResponse(stream(), media_type="text/event-stream")
 
@@ -319,46 +353,58 @@ def submit_review_stream(
 ) -> StreamingResponse:
     identity = resolve_identity(x_session_id, x_trace_id, x_thread_id)
 
-    def stream():
+    async def stream():
         langfuse = get_langfuse()
         yield sse_event("review.received", event_payload(identity, review_id=decision.review_id))
-        events: list[tuple[str, dict[str, Any]]] = []
+        command = Command(resume=resume_payload(decision))
+        root_span = langfuse.start_observation(
+            as_type="span",
+            name="hitl_email_review",
+            trace_context=TraceContext(trace_id=identity.langfuse_trace_id),
+            input={"decision": decision.model_dump(exclude_none=True)},
+            metadata=trace_metadata(identity, {"review_id": decision.review_id or ""}),
+        )
+        output: dict[str, Any] = {}
         try:
-            command = Command(resume=resume_payload(decision))
-            with langfuse.start_as_current_observation(
-                as_type="span",
-                name="hitl_email_review",
-                trace_context=TraceContext(trace_id=identity.langfuse_trace_id),
-                input={"decision": decision.model_dump(exclude_none=True)},
-                metadata=trace_metadata(identity, {"review_id": decision.review_id or ""}),
-            ) as root_span:
-                with propagate_attributes(
-                    session_id=identity.session_id,
-                    tags=["deepagents-cookbook", "hitl", "service-integration"],
-                    trace_name="hitl_email_review_demo",
-                ):
-                    result = get_agent().invoke(command, config=agent_config(identity))
+            async for event in get_agent().astream_events(command, config=agent_config(identity), version="v2"):
+                event_name = event.get("event")
+                data = event.get("data", {})
 
-                interrupt = first_interrupt(result)
+                if event_name == "on_chat_model_stream":
+                    delta = chunk_text(data.get("chunk"))
+                    if delta:
+                        yield sse_event("message.delta", event_payload(identity, delta=delta))
+
+                if event_name == "on_tool_start":
+                    yield sse_event("tool.started", event_payload(identity, tool_name=event.get("name")))
+
+                if event_name == "on_tool_end":
+                    yield sse_event("tool.finished", event_payload(identity, tool_name=event.get("name")))
+
+                interrupt = interrupt_from_chunk(data.get("chunk")) if is_root_graph_event(event) else None
                 if interrupt:
                     review_payload = event_payload(
                         identity,
                         review_id=interrupt.id,
                         email=interrupt_email(interrupt),
                     )
-                    root_span.update(output={"status": "pending_review", **review_payload})
-                    events.append(("review.required", review_payload))
-                else:
-                    answer = final_answer(result)
-                    event_name = "email.cancelled" if decision.type == "reject" else "email.sent"
-                    root_span.update(output={"status": event_name, "answer": answer})
-                    events.append((event_name, event_payload(identity, answer=answer)))
+                    output = {"status": "pending_review", **review_payload}
+                    yield sse_event("review.required", review_payload)
 
+                if event_name == "on_chain_end" and is_root_graph_event(event):
+                    result = data.get("output")
+                    if isinstance(result, dict) and "messages" in result:
+                        answer = final_answer(result)
+                        service_event = "email.cancelled" if decision.type == "reject" else "email.sent"
+                        output = {"status": service_event, "answer": answer}
+                        yield sse_event(service_event, event_payload(identity, answer=answer))
         except Exception as exc:
-            events.append(("error", event_payload(identity, code="agent_resume_failed", message=str(exc))))
+            output = {"status": "error", "message": str(exc)}
+            yield sse_event("error", event_payload(identity, code="agent_resume_failed", message=str(exc)))
         finally:
+            if output:
+                root_span.update(output=output)
+            root_span.end()
             langfuse.flush()
-        for event, payload in events:
-            yield sse_event(event, payload)
 
     return StreamingResponse(stream(), media_type="text/event-stream")

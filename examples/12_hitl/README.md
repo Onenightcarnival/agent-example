@@ -54,6 +54,12 @@ curl -N -X POST http://127.0.0.1:8012/drafts/stream \
 event: request.started
 data: {"session_id":"email-session-001","trace_id":"29d6c8a3-2d86-4f1c-bba1-58d55f52f3a9","thread_id":"email-thread-001"}
 
+event: tool.started
+data: {"session_id":"email-session-001","trace_id":"29d6c8a3-2d86-4f1c-bba1-58d55f52f3a9","thread_id":"email-thread-001","tool_name":"read_ticket"}
+
+event: tool.finished
+data: {"session_id":"email-session-001","trace_id":"29d6c8a3-2d86-4f1c-bba1-58d55f52f3a9","thread_id":"email-thread-001","tool_name":"read_ticket"}
+
 event: review.required
 data: {"session_id":"email-session-001","trace_id":"29d6c8a3-2d86-4f1c-bba1-58d55f52f3a9","thread_id":"email-thread-001","review_id":"8f2f...","email":{"to":"lin@example.com","subject":"订单 A1002 物流更新说明","body":"..."}}
 ```
@@ -101,11 +107,12 @@ curl -N -X POST http://127.0.0.1:8012/reviews/stream \
 
 - `/drafts/stream` 是业务入口。它先返回 `request.started`，中断时返回 `review.required`。
 - `/reviews/stream` 是人工审核入口。它先返回 `review.received`，再返回 `email.sent`、`email.cancelled` 或新的 `review.required`。
+- 服务会把底层 stream 转成自己的 SSE 协议。调用方只依赖 `message.delta`、`tool.started`、`tool.finished`、`review.required`、`email.sent`、`email.cancelled` 和 `error`。
 - `interrupt_on={"send_email": ...}` 让 `send_email` 进入人工审核流程。其他 tool 仍然正常执行。
 - `/reviews/stream` 用 `Command(resume=...)` 把 `approve`、`edit` 或 `reject` 送回同一个 thread。
 - `x-thread-id` 是恢复现场的关键。创建草稿和提交审核必须使用同一个 `thread_id`。
 - `x-trace-id` 会进入 Langfuse trace。服务响应和 SSE event 返回 UUID 字符串，传给 Langfuse 时会转成 32 位 hex。
-- Langfuse 根 span 记录服务输入和输出。LangChain callback 记录 agent 内部的模型调用、tool 调用和中断前后的运行过程。
+- Langfuse 根 span 记录服务输入和输出。LangChain callback 记录 agent 内部的模型调用、tool 调用和中断前后的运行过程。代码不把 Langfuse context manager 跨过 SSE `yield`，避免 OpenTelemetry context 在流式响应里错位。
 - `review_id` 标识这次待审核动作。示例保留这个字段，真实服务还应该校验它是否匹配当前待审核任务。
 - 示例使用内存 checkpointer。服务重启后，等待审核的 thread 会丢失。真实服务应该换成 PostgreSQL、Redis 或其他外部 checkpoint。
 - `edit` 会替换 `send_email` 的参数，再继续执行原来的 tool。这样人工可以改正文，不需要让 agent 重新起草。
