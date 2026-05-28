@@ -120,12 +120,17 @@ def mcp_http_client(
     return httpx.AsyncClient(headers=headers, timeout=timeout, auth=auth, trust_env=False)
 
 
+def sandbox_mcp_headers() -> dict[str, str] | None:
+    return {"SANDBOX_MCP_AUTH_HEADER": os.environ.get("SANDBOX_MCP_AUTH_HEADER")}
+
+
 async def load_sandbox_tools():
     client = MultiServerMCPClient(
         {
             "sandbox": {
                 "transport": "streamable_http",
                 "url": os.environ.get("SANDBOX_MCP_SERVER_URL", "http://localhost:8080/mcp"),
+                "headers": sandbox_mcp_headers(),
                 "timeout": timedelta(seconds=30),
                 "sse_read_timeout": timedelta(seconds=300),
                 "httpx_client_factory": mcp_http_client,

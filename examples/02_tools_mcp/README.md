@@ -29,6 +29,14 @@ http://localhost:8080/mcp
 SANDBOX_MCP_SERVER_URL=http://localhost:8080/mcp
 ```
 
+如果 sandbox MCP server 需要鉴权，也在 `.env` 里设置 auth：
+
+```bash
+SANDBOX_MCP_AUTH_HEADER="Authorization: Bearer xxxx"
+```
+
+代码会把这个值作为 MCP 请求的 header。
+
 模型环境变量沿用第一章：
 
 ```bash
