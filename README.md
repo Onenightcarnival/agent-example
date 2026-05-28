@@ -104,6 +104,13 @@ MODEL_NAME=deepseek-v4-flash
 
 示例默认使用 DeepSeek 的 OpenAI 兼容接口。换模型时，改这三个变量即可。
 
+示例代码里用 `extra_body={"thinking": {"type": "disabled"}}` 关闭 DeepSeek thinking。
+有些自部署模型服务使用 chat template 参数。遇到这种服务时，把这一行改成：
+
+```python
+extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+```
+
 有些示例需要本地服务。这里假设你已经会使用 Docker 和 Docker Compose。
 
 - AIO Sandbox：使用官方仓库里的 [docker-compose.yaml](https://github.com/agent-infra/sandbox/blob/main/docker-compose.yaml)，默认 MCP 地址是 `http://localhost:8080/mcp`。

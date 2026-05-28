@@ -24,7 +24,6 @@ uv run --env-file .env python examples/05_skills/skill_agent.py
 - `FilesystemBackend` 让示例直接从本地示例目录读取 skill 文件。
 - 一个 skill 对应一个目录，目录里放 `SKILL.md`。
 - skill 名称用小写字母、数字和连字符，比如 `example-reviewer`。
-- `extra_body={"thinking": {"type": "disabled"}}` 关闭 DeepSeek thinking，避免多轮工具调用时丢失 reasoning 内容。
 - 多个 agent 或 subagent 可以复用同一组 skill。
 
 ## 取舍
