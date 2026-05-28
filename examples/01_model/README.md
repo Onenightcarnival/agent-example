@@ -31,8 +31,9 @@ uv run --env-file .env python examples/01_model/model_connection.py
 - `MODEL_NAME` 对应具体模型名，比如 `deepseek-v4-pro`。
 - `MODEL_API_KEY` 是模型服务的密钥。
 - `MODEL_BASE_URL` 指向 OpenAI 兼容接口。使用 OpenAI 官方接口时可以不设置。
-- `extra_body={"thinking": {"type": "disabled"}}` 关闭 DeepSeek thinking。
-- 自部署模型服务如果使用 chat template 参数，把上一行改成 `extra_body={"chat_template_kwargs": {"enable_thinking": False}}`。
+- `extra_body` 同时传入 `thinking` 和 `chat_template_kwargs`。
+- `thinking` 用来关闭 DeepSeek thinking。
+- `chat_template_kwargs` 用来关闭自部署模型服务的 chat template thinking。
 - `httpx.Client(trust_env=False)` 忽略本机代理等环境变量。
 - `DisableBuiltinTools` 会在模型调用前过滤 DeepAgents 内置工具。
 - `model` 可以传 `provider:model` 字符串，也可以传已经初始化好的 chat model。

@@ -206,7 +206,10 @@ async def main() -> None:
         api_key=os.environ["MODEL_API_KEY"],
         base_url=os.environ.get("MODEL_BASE_URL") or None,
         http_client=httpx.Client(trust_env=False),
-        extra_body={"thinking": {"type": "disabled"}},
+        extra_body={
+            "thinking": {"type": "disabled"},  # DeepSeek：关闭 thinking。
+            "chat_template_kwargs": {"enable_thinking": False},  # 自部署模型服务：关闭 chat template thinking。
+        },
     )
     mcp_tools = await load_sandbox_tools()
     paths = await prepare_sandbox(mcp_tools)

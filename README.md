@@ -104,11 +104,15 @@ MODEL_NAME=deepseek-v4-flash
 
 示例默认使用 DeepSeek 的 OpenAI 兼容接口。换模型时，改这三个变量即可。
 
-示例代码里用 `extra_body={"thinking": {"type": "disabled"}}` 关闭 DeepSeek thinking。
-有些自部署模型服务使用 chat template 参数。遇到这种服务时，把这一行改成：
+示例代码会同时传入两个 `extra_body` 参数。
+DeepSeek 使用 `thinking` 关闭 thinking。
+有些自部署模型服务使用 `chat_template_kwargs` 关闭 chat template thinking。
 
 ```python
-extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+extra_body={
+    "thinking": {"type": "disabled"},  # DeepSeek：关闭 thinking。
+    "chat_template_kwargs": {"enable_thinking": False},  # 自部署模型服务：关闭 chat template thinking。
+},
 ```
 
 有些示例需要本地服务。这里假设你已经会使用 Docker 和 Docker Compose。
