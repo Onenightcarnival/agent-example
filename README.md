@@ -56,6 +56,7 @@
 10. `hooks`：在关键步骤插入自定义逻辑，接入权限、记录和业务规则。
 11. `career_memory`：用职业履历模型组织长期记忆，区分偏好、经验和踩坑记录。
 12. `hitl`：在关键节点加入人工确认、打断和继续。
+13. `model_routing`：按任务难度在 `flash` 和 `pro` 之间切换。
 
 ## 内容结构
 
@@ -73,6 +74,7 @@ examples/
   10_hooks/                 进阶 agent：自定义 hooks
   11_career_memory/         进阶 agent：职业履历式记忆
   12_hitl/                  进阶 agent：human in the loop
+  13_model_routing/         进阶 agent：模型路由
 docs/
   README.md                 写作约定和目录说明
   example-template.md       示例模板

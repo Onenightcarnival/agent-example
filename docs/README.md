@@ -1,6 +1,6 @@
 # 文档维护说明
 
-这个项目按“四阶段、十二主题”维护 agent 示例。当前可运行示例使用 DeepAgents。
+这个项目按“四阶段、十三主题”维护 agent 示例。当前可运行示例使用 DeepAgents。
 
 ## 目录
 
@@ -18,6 +18,7 @@ examples/
   10_hooks/
   11_career_memory/
   12_hitl/
+  13_model_routing/
 docs/
   README.md
   example-template.md
@@ -48,6 +49,7 @@ docs/
 - `10_hooks`：模型调用、tool 调用和状态更新前后的自定义逻辑。
 - `11_career_memory`：职业履历式长期记忆、客户偏好、经验和踩坑记录。
 - `12_hitl`：人工确认、审批、打断、继续和结果修正。
+- `13_model_routing`：按任务难度、风险和运行状态选择模型。
 
 如果一个示例同时涉及多个主题，放到它最想讲清楚的主题。不要为了分类新建很细的目录。
 
