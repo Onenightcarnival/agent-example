@@ -57,6 +57,7 @@
 11. `career_memory`：用职业履历模型组织长期记忆，区分偏好、经验和踩坑记录。
 12. `hitl`：在关键节点加入人工确认、打断和继续。
 13. `model_routing`：按任务难度在 `flash` 和 `pro` 之间切换。
+14. `dynamic_tool_headers`：把请求里的身份 header 转发给 MCP tool。
 
 ## 内容结构
 
@@ -75,6 +76,7 @@ examples/
   11_career_memory/         进阶 agent：职业履历式记忆
   12_hitl/                  进阶 agent：human in the loop
   13_model_routing/         进阶 agent：模型路由
+  14_dynamic_tool_headers/  进阶 agent：动态 tool header
 docs/
   README.md                 写作约定和目录说明
   example-template.md       示例模板

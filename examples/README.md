@@ -26,5 +26,6 @@
 - [11_career_memory](11_career_memory/)：用职业履历模型组织长期记忆。
 - [12_hitl](12_hitl/)：在关键节点加入人工确认、打断和继续。
 - [13_model_routing](13_model_routing/)：在模型调用前按任务难度切换 `flash` 和 `pro`。
+- [14_dynamic_tool_headers](14_dynamic_tool_headers/)：把请求级 header 转发给 MCP tool。
 
 每个目录先给一个最小示例。新增示例时，尽量放进已有主题。如果一个示例跨多个主题，放到它最想讲清楚的主题下。
