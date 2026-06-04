@@ -59,6 +59,7 @@
 13. `model_routing`：按任务难度在 `flash` 和 `pro` 之间切换。
 14. `dynamic_tool_headers`：把请求里的身份 header 转发给 MCP tool。
 17. `langfuse_session_traces`：用同一个 Langfuse session 聚合多轮独立 trace。
+18. `agent_error_handling`：用 middleware 捕获运行期异常，再转成业务错误。
 
 ## 内容结构
 
@@ -79,6 +80,7 @@ examples/
   13_model_routing/         进阶 agent：模型路由
   14_dynamic_tool_headers/  进阶 agent：动态 tool header
   17_langfuse_session_traces/ 生产 agent：Langfuse session 与 trace
+  18_agent_error_handling/  生产 agent：运行期异常处理
 docs/
   README.md                 写作约定和目录说明
   example-template.md       示例模板
