@@ -13,7 +13,6 @@ from deepagents import create_deep_agent
 from langchain.agents.middleware import AgentMiddleware
 from langchain_openai import ChatOpenAI
 from langfuse import Langfuse, propagate_attributes
-from langfuse.api.commons.errors.not_found_error import NotFoundError
 from langfuse.langchain import CallbackHandler
 from langfuse.types import TraceContext
 from langgraph.checkpoint.memory import MemorySaver
@@ -159,7 +158,7 @@ def wait_for_public_api(langfuse: Langfuse, trace_ids: list[str], timeout_second
     while missing and time.monotonic() < deadline:
         for trace_id in list(missing):
             try:
-                trace = langfuse.api.trace.get(trace_id, fields=PUBLIC_API_FIELDS)
+                trace = langfuse.api.trace.get(trace_id)
             except Exception:
                 continue
             if getattr(trace, "id", None) == trace_id:
@@ -189,14 +188,16 @@ def print_session_summary(langfuse: Langfuse, turns: list[TurnResult]) -> None:
     print("\nLangfuse Public API observation sessionId:")
     for turn in turns:
         try:
-            observations = langfuse.api.observations.get_many(
+            observations = langfuse.api.observations_v_2.get_many(
                 trace_id=turn.langfuse_trace_id,
                 limit=100,
                 fields=PUBLIC_API_FIELDS,
             )
-        except NotFoundError as exc:
+        except Exception as exc:
             print(f"- turn {turn.index}: 当前 Langfuse 部署不支持 v2 observations API，无法读取 sessionId")
-            print(f"  error: {exc.body.get('message')}")
+            body = getattr(exc, "body", None)
+            message = body.get("message") if isinstance(body, dict) else str(exc)
+            print(f"  error: {message}")
             continue
 
         session_ids = sorted({observation.session_id for observation in observations.data})
