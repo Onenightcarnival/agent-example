@@ -62,6 +62,7 @@
 16. `backend_to_db`：预留后端服务写入数据库示例。
 17. `langfuse_session_traces`：用同一个 Langfuse session 聚合多轮独立 trace。
 18. `agent_error_handling`：用 middleware 捕获运行期异常，再转成业务错误。
+19. `tool_argument_json`：把非法 tool `arguments` 转成模型可见的失败结果。
 
 ## 内容结构
 
@@ -85,6 +86,7 @@ examples/
   16_backend_to_db/         生产 agent：后端服务写入数据库（占位）
   17_langfuse_session_traces/ 生产 agent：Langfuse session 与 trace
   18_agent_error_handling/  生产 agent：运行期异常处理
+  19_tool_argument_json/    进阶 agent：tool arguments JSON 错误处理
 docs/
   README.md                 写作约定和目录说明
   example-template.md       示例模板
