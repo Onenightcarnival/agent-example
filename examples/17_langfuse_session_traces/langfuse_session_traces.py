@@ -12,10 +12,8 @@ import httpx
 from deepagents import create_deep_agent
 from langchain.agents.middleware import AgentMiddleware
 from langchain_openai import ChatOpenAI
-from langfuse import Langfuse, propagate_attributes
+from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
-from langfuse.types import TraceContext
-from langgraph.checkpoint.memory import MemorySaver
 
 BUILTIN_TOOLS = frozenset(
     {
@@ -32,9 +30,7 @@ BUILTIN_TOOLS = frozenset(
 )
 
 SESSION_ID = str(uuid4())
-THREAD_ID = str(uuid4())
 TRACE_NAME = "langfuse_session_trace_demo"
-PUBLIC_API_FIELDS = "basic"
 
 
 @dataclass(frozen=True)
@@ -87,13 +83,8 @@ def build_agent():
     return create_deep_agent(
         model=build_model(),
         tools=[get_order_status],
-        system_prompt=(
-            "你是订单助手。回答要短。"
-            "如果需要订单状态，就调用工具查询。"
-            "如果用户问前文提到的订单，要从当前对话上下文里判断。"
-        ),
+        system_prompt="你是订单助手。回答要短。如果需要订单状态，就调用工具查询。",
         middleware=[DisableBuiltinTools()],
-        checkpointer=MemorySaver(),
     )
 
 
@@ -105,42 +96,26 @@ def build_langfuse() -> Langfuse:
     )
 
 
-def run_turn(langfuse: Langfuse, agent, index: int, message: str) -> TurnResult:
-    trace_uuid = uuid4()
-    trace_id = str(trace_uuid)
-    langfuse_trace_id = trace_uuid.hex
+def run_turn(agent, index: int, message: str) -> TurnResult:
     agent_input = {"messages": [{"role": "user", "content": message}]}
-    handler = CallbackHandler(trace_context=TraceContext(trace_id=langfuse_trace_id))
+    handler = CallbackHandler(public_key=os.environ["LANGFUSE_PUBLIC_KEY"])
 
-    with langfuse.start_as_current_observation(
-        as_type="span",
-        name=f"{TRACE_NAME}_turn_{index}",
-        trace_context=TraceContext(trace_id=langfuse_trace_id),
-        input=agent_input,
-        metadata={
-            "example": "17_langfuse_session_traces",
-            "session_id": SESSION_ID,
-            "trace_id": trace_id,
-            "langfuse_trace_id": langfuse_trace_id,
-            "thread_id": THREAD_ID,
-            "turn": str(index),
+    result = agent.invoke(
+        agent_input,
+        config={
+            "callbacks": [handler],
+            "metadata": {
+                "example": "17_langfuse_session_traces",
+                "turn": str(index),
+                "langfuse_session_id": SESSION_ID,
+                "langfuse_tags": ["deepagents-cookbook", "langfuse-session"],
+            },
+            "run_name": f"{TRACE_NAME}_turn_{index}",
         },
-    ) as root_span:
-        with propagate_attributes(
-            session_id=SESSION_ID,
-            tags=["deepagents-cookbook", "langfuse-session"],
-            trace_name=TRACE_NAME,
-        ):
-            result = agent.invoke(
-                agent_input,
-                config={
-                    "callbacks": [handler],
-                    "configurable": {"thread_id": THREAD_ID},
-                    "run_name": f"{TRACE_NAME}_turn_{index}",
-                },
-            )
-        answer = result["messages"][-1].content
-        root_span.update(output={"answer": answer})
+    )
+    answer = result["messages"][-1].content
+    langfuse_trace_id = handler.last_trace_id or ""
+    trace_id = str(UUID(hex=langfuse_trace_id)) if langfuse_trace_id else ""
 
     return TurnResult(
         index=index,
@@ -171,37 +146,10 @@ def wait_for_public_api(langfuse: Langfuse, trace_ids: list[str], timeout_second
 
 
 def print_session_summary(langfuse: Langfuse, turns: list[TurnResult]) -> None:
-    traces = langfuse.api.trace.list(
-        session_id=SESSION_ID,
-        name=TRACE_NAME,
-        limit=20,
-        fields=PUBLIC_API_FIELDS,
-    )
-    trace_session_ids = {trace.id: trace.session_id for trace in traces.data}
-
     print("\nLangfuse Public API trace sessionId:")
     for turn in turns:
-        print(
-            f"- turn {turn.index}: traceId={turn.trace_id}, sessionId={trace_session_ids.get(turn.langfuse_trace_id)}"
-        )
-
-    print("\nLangfuse Public API observation sessionId:")
-    for turn in turns:
-        try:
-            observations = langfuse.api.observations_v_2.get_many(
-                trace_id=turn.langfuse_trace_id,
-                limit=100,
-                fields=PUBLIC_API_FIELDS,
-            )
-        except Exception as exc:
-            print(f"- turn {turn.index}: 当前 Langfuse 部署不支持 v2 observations API，无法读取 sessionId")
-            body = getattr(exc, "body", None)
-            message = body.get("message") if isinstance(body, dict) else str(exc)
-            print(f"  error: {message}")
-            continue
-
-        session_ids = sorted({observation.session_id for observation in observations.data})
-        print(f"- turn {turn.index}: {session_ids}")
+        trace = langfuse.api.trace.get(turn.langfuse_trace_id)
+        print(f"- turn {turn.index}: traceId={turn.trace_id}, sessionId={getattr(trace, 'session_id', None)}")
 
 
 def main() -> None:
@@ -209,16 +157,15 @@ def main() -> None:
     agent = build_agent()
     messages = [
         "查一下订单 A1002 的状态，并用一句话回复。",
-        "继续刚才的会话，再查一下订单 A1003。",
-        "把刚才两个订单的状态合成一句话。",
+        "查一下订单 A1003 的状态，并用一句话回复。",
+        "查一下订单 A1001 的状态，并用一句话回复。",
     ]
 
     print(f"sessionId: {SESSION_ID}")
-    print(f"threadId: {THREAD_ID}")
 
     turns: list[TurnResult] = []
     for index, message in enumerate(messages, start=1):
-        turn = run_turn(langfuse, agent, index, message)
+        turn = run_turn(agent, index, message)
         turns.append(turn)
         print(f"\nturn {turn.index}")
         print(f"user: {turn.message}")

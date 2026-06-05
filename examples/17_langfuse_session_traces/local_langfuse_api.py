@@ -64,17 +64,16 @@ def main() -> None:
     from_timestamp = datetime.now(UTC)
     messages = [
         "查一下订单 A1002 的状态，并用一句话回复。",
-        "继续刚才的会话，再查一下订单 A1003。",
-        "把刚才两个订单的状态合成一句话。",
+        "查一下订单 A1003 的状态，并用一句话回复。",
+        "查一下订单 A1001 的状态，并用一句话回复。",
     ]
 
     print(f"local langfuse api: {api_base_url().rstrip('/')}")
     print(f"sessionId: {demo.SESSION_ID}")
-    print(f"threadId: {demo.THREAD_ID}")
 
     turns: list[demo.TurnResult] = []
     for index, message in enumerate(messages, start=1):
-        turn = demo.run_turn(langfuse, agent, index, message)
+        turn = demo.run_turn(agent, index, message)
         turns.append(turn)
         print(f"turn {turn.index}: traceId={turn.trace_id}, langfuseTraceId={turn.langfuse_trace_id}")
 
