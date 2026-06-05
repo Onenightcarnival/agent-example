@@ -27,6 +27,8 @@
 - [12_hitl](12_hitl/)：在关键节点加入人工确认、打断和继续。
 - [13_model_routing](13_model_routing/)：在模型调用前按任务难度切换 `flash` 和 `pro`。
 - [14_dynamic_tool_headers](14_dynamic_tool_headers/)：把请求级 header 转发给 MCP tool。
+- [15_opengauss_checkpoint_and_store](15_opengauss_checkpoint_and_store/)：预留 openGauss checkpoint 和 store 示例。
+- [16_backend_to_db](16_backend_to_db/)：预留后端服务写入数据库示例。
 - [17_langfuse_session_traces](17_langfuse_session_traces/)：用同一个 Langfuse session 聚合多轮独立 trace。
 - [18_agent_error_handling](18_agent_error_handling/)：把 `invoke` 和 `stream` 的细分异常转成业务错误。
 

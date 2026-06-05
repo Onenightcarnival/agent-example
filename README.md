@@ -58,6 +58,8 @@
 12. `hitl`：在关键节点加入人工确认、打断和继续。
 13. `model_routing`：按任务难度在 `flash` 和 `pro` 之间切换。
 14. `dynamic_tool_headers`：把请求里的身份 header 转发给 MCP tool。
+15. `opengauss_checkpoint_and_store`：预留 openGauss checkpoint 和 store 示例。
+16. `backend_to_db`：预留后端服务写入数据库示例。
 17. `langfuse_session_traces`：用同一个 Langfuse session 聚合多轮独立 trace。
 18. `agent_error_handling`：用 middleware 捕获运行期异常，再转成业务错误。
 
@@ -79,6 +81,8 @@ examples/
   12_hitl/                  进阶 agent：human in the loop
   13_model_routing/         进阶 agent：模型路由
   14_dynamic_tool_headers/  进阶 agent：动态 tool header
+  15_opengauss_checkpoint_and_store/ 生产 agent：openGauss checkpoint 和 store（占位）
+  16_backend_to_db/         生产 agent：后端服务写入数据库（占位）
   17_langfuse_session_traces/ 生产 agent：Langfuse session 与 trace
   18_agent_error_handling/  生产 agent：运行期异常处理
 docs/
