@@ -82,10 +82,10 @@ examples/
   12_hitl/                  进阶 agent：human in the loop
   13_model_routing/         进阶 agent：模型路由
   14_dynamic_tool_headers/  进阶 agent：动态 tool header
-  15_opengauss_checkpoint_and_store/ 生产 agent：openGauss checkpoint 和 store（占位）
-  16_backend_to_db/         生产 agent：后端服务写入数据库（占位）
-  17_langfuse_session_traces/ 生产 agent：Langfuse session 与 trace
-  18_agent_error_handling/  生产 agent：运行期异常处理
+  15_opengauss_checkpoint_and_store/ 进阶 agent：openGauss checkpoint 和 store（占位）
+  16_backend_to_db/         进阶 agent：后端服务写入数据库（占位）
+  17_langfuse_session_traces/ 进阶 agent：Langfuse session 与 trace
+  18_agent_error_handling/  进阶 agent：运行期异常处理
   19_tool_argument_json/    进阶 agent：tool arguments JSON 错误处理
 docs/
   README.md                 写作约定和目录说明
