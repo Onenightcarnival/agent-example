@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import time
 from dataclasses import dataclass
 from typing import Any
 from uuid import UUID, uuid4
@@ -126,32 +125,6 @@ def run_turn(agent, index: int, message: str) -> TurnResult:
     )
 
 
-def wait_for_public_api(langfuse: Langfuse, trace_ids: list[str], timeout_seconds: int = 30) -> None:
-    deadline = time.monotonic() + timeout_seconds
-    missing = {UUID(trace_id).hex for trace_id in trace_ids}
-
-    while missing and time.monotonic() < deadline:
-        for trace_id in list(missing):
-            try:
-                trace = langfuse.api.trace.get(trace_id)
-            except Exception:
-                continue
-            if getattr(trace, "id", None) == trace_id:
-                missing.remove(trace_id)
-        if missing:
-            time.sleep(2)
-
-    if missing:
-        print(f"public api 还没返回这些 trace：{', '.join(sorted(missing))}")
-
-
-def print_session_summary(langfuse: Langfuse, turns: list[TurnResult]) -> None:
-    print("\nLangfuse Public API trace sessionId:")
-    for turn in turns:
-        trace = langfuse.api.trace.get(turn.langfuse_trace_id)
-        print(f"- turn {turn.index}: traceId={turn.trace_id}, sessionId={getattr(trace, 'session_id', None)}")
-
-
 def main() -> None:
     langfuse = build_langfuse()
     agent = build_agent()
@@ -173,8 +146,6 @@ def main() -> None:
         print(f"assistant: {turn.answer}")
 
     langfuse.flush()
-    wait_for_public_api(langfuse, [turn.trace_id for turn in turns])
-    print_session_summary(langfuse, turns)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@
 
 ## 代码
 
-见 [langfuse_session_traces.py](langfuse_session_traces.py) 和 [local_langfuse_api.py](local_langfuse_api.py)。
+主示例见 [langfuse_session_traces.py](langfuse_session_traces.py)。如果想看 Langfuse Public API 的原始返回，再看 [local_langfuse_api.py](local_langfuse_api.py)。
 
 核心逻辑和 08 号示例一样，仍然只挂 `CallbackHandler`。区别是 `metadata` 里多了 `langfuse_session_id`：
 
@@ -83,15 +83,6 @@ traceId: 9b2c0b7a-4d2f-4bb1-a28a-5d61c827ab31
 assistant: 订单 A1003 已取消，退款处理中。
 ```
 
-随后脚本会通过 Langfuse SDK 查询 traces，并打印每条 trace 的 `sessionId`：
-
-```text
-Langfuse Public API trace sessionId:
-- turn 1: traceId=8a7f0b91-2c8e-4d5a-8f16-0e9c2b4d6a71, sessionId=3d0f7e77-1fd5-45a2-9623-e1c7d2fc7bb6
-- turn 2: traceId=9b2c0b7a-4d2f-4bb1-a28a-5d61c827ab31, sessionId=3d0f7e77-1fd5-45a2-9623-e1c7d2fc7bb6
-- turn 3: traceId=1c4d1321-3a02-4c69-b91b-a660447cf0bc, sessionId=3d0f7e77-1fd5-45a2-9623-e1c7d2fc7bb6
-```
-
 打开 Langfuse 项目后，也可以在 Sessions 里查看脚本打印出的 `sessionId`。里面应该能看到三条 trace。
 
 如果想看本地 Langfuse Public API 的原始 JSON，运行：
@@ -103,11 +94,12 @@ uv run --env-file .env python examples/17_langfuse_session_traces/local_langfuse
 这个脚本会先跑同一组三轮请求，再请求本地 Langfuse：
 
 ```text
+GET /api/public/traces/{traceId}
 GET /api/public/traces?page=1&limit=100&fromTimestamp=...&toTimestamp=...
 GET /api/public/v2/observations?traceId=...
 ```
 
-脚本不会在 traces list 请求里传 `sessionId`。它先按本次运行的时间范围查询 traces，再在返回数据里筛出本次三条 trace，并打印每条 trace 的 `sessionId`。
+脚本不会在 traces list 请求里传 `sessionId`。它先按本次运行的时间范围查询 traces，再在返回数据里筛出本次三条 trace。返回的 trace 里可以看到 `sessionId`。
 
 当前一些自部署 Langfuse 不支持 `/api/public/v2/observations`，会返回 “v2 APIs are currently in beta and only available on Langfuse Cloud”。trace 查询和 Sessions 看板仍然可以验证 `sessionId` 聚合。
 
