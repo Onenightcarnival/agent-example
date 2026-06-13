@@ -63,6 +63,7 @@
 17. `langfuse_session_traces`：用同一个 Langfuse session 聚合多轮独立 trace。
 18. `agent_error_handling`：用 middleware 捕获运行期异常，再转成业务错误。
 19. `tool_argument_json`：把非法 tool `arguments` 转成模型可见的失败结果。
+20. `langgraph_deepagents_langfuse`：外层 LangGraph 调 DeepAgents 节点，并用 `session_id` 接入 Langfuse。
 
 ## 内容结构
 
@@ -87,6 +88,7 @@ examples/
   17_langfuse_session_traces/ 进阶 agent：Langfuse session 与 trace
   18_agent_error_handling/  进阶 agent：运行期异常处理
   19_tool_argument_json/    进阶 agent：tool arguments JSON 错误处理
+  20_langgraph_deepagents_langfuse/ 进阶 agent：LangGraph 调 DeepAgents 节点
 docs/
   README.md                 写作约定和目录说明
   example-template.md       示例模板
